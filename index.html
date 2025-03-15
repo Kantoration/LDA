@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Blueprint Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .instructions {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .upload-box {
+            border: 2px dashed #007BFF;
+            padding: 20px;
+            margin-top: 10px;
+            background-color: #fafafa;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .upload-box:hover {
+            background-color: #e3f2fd;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Upload Blueprint Files</h2>
+        <p class="instructions">
+            📌 **Instructions for Uploading:**
+            <br> 1️⃣ Click the box below **or drag & drop** a file into it.
+            <br> 2️⃣ Supported file types: **DXF, DWG (AutoCAD), IFC (Revit)**.
+            <br> 3️⃣ After uploading, you will see a confirmation message.
+        </p>
+
+        <label class="upload-box" for="fileInput">
+            📂 **Click here** or **Drag & Drop Files**
+            <input type="file" id="fileInput" accept=".dxf,.dwg,.ifc" multiple>
+        </label>
+
+        <button class="btn" onclick="uploadFiles()">Upload Files</button>
+
+        <p class="message" id="message"></p>
+    </div>
+
+    <script>
+        function uploadFiles() {
+            const files = document.getElementById("fileInput").files;
+            if (files.length === 0) {
+                document.getElementById("message").textContent = "Please select a file first!";
+                return;
+            }
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append("file", files[i]);
+            }
+
+            fetch("http://127.0.0.1:5000/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("message").textContent = data.message;
+            })
+            .catch(error => {
+                document.getElementById("message").textContent = "Upload failed! Please try again.";
+            });
+        }
+    </script>
+
+</body>
+</html>
